@@ -1,6 +1,55 @@
 .venv/
+venv/
+env/
+.env
+.env.*
+!.env.example
+
+# Python cache and compiled files
 __pycache__/
+*.py[cod]
+*$py.class
+*.so
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
-*.pyc
+.pytype/
+.hypothesis/
+
+# Packaging and build artifacts
+build/
+dist/
+*.egg-info/
+*.egg
+pip-wheel-metadata/
+
+# Test and coverage output
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+pytestdebug.log
+
+# Type-checker and documentation output
+.pyre/
+.pyright/
+site/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Editors and operating systems
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Local project data and model artifacts
+checkpoints/
+outputs/
+*.ckpt
+*.pt
+*.pth
+*.safetensors

@@ -1,107 +1,102 @@
 # GPT-2 from scratch
 
-An educational implementation of GPT-2 components in PyTorch, with explicit
-tensor operations and tests against PyTorch's built-in modules.
+A small, educational implementation of the GPT-2 architecture in PyTorch.
+The goal is to understand how the components work and fit together, with
+explicit tensor operations and readable tests against PyTorch modules.
 
-## Project status
+## What's implemented
 
-Implemented and tested:
-
-- Token embeddings
-- Learned positional embeddings
+- Token and learned positional embeddings
 - Layer normalization
 - Causal multi-head self-attention
+- MLP with the tanh approximation of GELU
+- Pre-norm Transformer blocks with residual connections
+- A complete model that maps token IDs to vocabulary logits
+- Shared token embedding and output projection weights
 
-The MLP, transformer block, unembedding, and complete model files are currently
-placeholders. Training, tokenization, pretrained weight loading, and text
-generation are not implemented yet.
+The default configuration follows GPT-2 small: 12 layers, 12 heads, a hidden
+size of 768, and a context length of 1,024 tokens. Use a smaller configuration
+when experimenting on CPU.
+
+This is an architecture implementation, not a pretrained text generator. Weights
+start randomly initialized. Tokenization, pretrained checkpoint loading, a
+training pipeline, and optimized inference are outside the scope of this project.
+Dropout and the special GPT-2 residual-projection initialization are omitted
+to keep the implementation focused on the forward computation.
 
 ## Installation
 
-Use Python 3.11 or newer. CI is configured for Python 3.11, 3.12, and 3.13 on Linux.
-From the repository root:
+Requires Python 3.11 or newer. From the repository root:
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate
-python -m pip install --upgrade pip
-python -m pip install -c requirements/constraints.txt -e '.[dev]'
+python -m pip install -e '.[dev]'
 ```
 
-On Windows, activate the environment with `.venv\Scripts\Activate.ps1` in
-PowerShell. For a CPU-only Linux environment, install PyTorch before the project:
+On Windows PowerShell, activate with `.venv\Scripts\Activate.ps1` instead.
+For a CPU-only PyTorch installation, follow the
+[PyTorch instructions](https://pytorch.org/get-started/locally/) before installing
+the project.
+
+## Usage
+
+```python
+import torch
+
+from gpt2.config import Config
+from gpt2.model import GPT2
+
+torch.manual_seed(42)
+cfg = Config(
+    d_model=32, d_vocab=100, d_head=8, n_heads=4,
+    d_mlp=128, n_layers=2, n_ctx=64,
+)
+model = GPT2(cfg)
+tokens = torch.tensor([[1, 5, 9, 2]])
+
+logits = model(tokens)
+print(logits.shape)  # torch.Size([1, 4, 100])
+
+# Each position predicts the next token. The last position has no target here.
+loss = torch.nn.functional.cross_entropy(
+    logits[:, :-1].reshape(-1, cfg.d_vocab),
+    tokens[:, 1:].reshape(-1),
+)
+loss.backward()
+```
+
+Input token IDs have shape `[batch, position]`. The model returns raw logits of
+shape `[batch, position, d_vocab]`; cross-entropy applies the necessary
+normalization. Attention only reads the current token and earlier tokens.
+
+## Tests
 
 ```bash
-python -m pip install -c requirements/constraints.txt torch --index-url https://download.pytorch.org/whl/cpu
-python -m pip install -c requirements/constraints.txt -e '.[dev]'
-```
-
-For other hardware configurations, follow the
-[PyTorch installation instructions](https://pytorch.org/get-started/locally/).
-Runtime dependencies are declared in `pyproject.toml`; development tools are
-included in the `dev` extra.
-
-`requirements/constraints.txt` records the tested versions of direct dependencies
-and development tools. It is not a complete lockfile: pip still resolves their
-transitive dependencies. NumPy uses a compatible version range on Python 3.11,
-because the version tested locally requires Python 3.12 or newer.
-Update these constraints deliberately and rerun the
-checks when upgrading dependencies.
-
-## Run the example
-
-```bash
-python examples/attention.py
-```
-
-This runs embeddings, layer normalization, and attention on synthetic token IDs
-with randomly initialized weights. It requires no dataset or model download.
-
-Expected output:
-
-```text
-Token shape: (2, 4)
-Attention output shape: (2, 4, 16)
-```
-
-## Development
-
-With the virtual environment activated, run all checks with `make check`, or run
-the equivalent commands individually:
-
-```bash
-python -m ruff check src tests examples typings
-python -m ruff format --check src tests examples typings
-python -m mypy
-python -m pyright
 python -m pytest
 ```
 
-Use `make format` to format files and `make build` to build a wheel and source
-distribution. Make is optional; `python -m build` is the equivalent build command.
+Tests use small configurations and compare the individual components and a
+Transformer block with PyTorch equivalents. Model tests check the output shape,
+shared weights, gradient propagation, and causal behavior.
 
-Tests use small configurations and deterministic seeds. Attention tests compare
-outputs and gradients against `nn.MultiheadAttention`, check causal isolation,
-and exercise masking in float32, float16, and bfloat16. The reduced-precision
-tests cover the mask, not the entire forward pass on every device.
+Optional formatting checks:
 
-Mypy checks the active Python version so installed dependency stubs are analyzed
-with the matching interpreter. Both type checkers use a local stub for the
-PyTorch `fancy-einsum` API in `typings/`.
-
-## Layout
-
-```text
-src/gpt2/       Model components and configuration
-tests/          PyTorch comparisons and behavior tests
-examples/       Runnable component examples
-docs/           Tensor conventions
-typings/        Local third-party type declarations
+```bash
+python -m ruff check src tests
+python -m ruff format --check src tests
 ```
 
-See [tensor shapes](docs/tensor-shapes.md) for the axis conventions used throughout
-the implemented components. Local checkpoints and generated outputs are ignored
-by Git.
+## Structure
+
+```text
+src/gpt2/       Components, configuration, and complete model
+tests/          Small PyTorch comparisons and model checks
+```
+
+Read the components in this order: `embedding.py`, `pos_embedding.py`,
+`layer_norm.py`, `attention.py`, `mlp.py`, `transformer_block.py`,
+`unembedding.py`, and `model.py`.
 
 ## License
 

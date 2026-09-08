@@ -13,7 +13,7 @@ class LayerNorm(nn.Module):
         self.w: nn.Parameter = nn.Parameter(torch.ones(cfg.d_model))
         self.b: nn.Parameter = nn.Parameter(torch.zeros(cfg.d_model))
 
-    def forward(self, residual) -> torch.Tensor:
+    def forward(self, residual: torch.Tensor) -> torch.Tensor:
         # residual: [batch, position, d_model]
         mean = reduce(residual, "batch position d_model -> batch position 1", "mean")
         residual_centered = residual - mean

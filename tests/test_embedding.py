@@ -8,7 +8,7 @@ from gpt2.embedding import Embed
 def test_embedding_matches_pytorch() -> None:
     torch.manual_seed(42)
 
-    cfg = Config()
+    cfg = Config(d_model=16, d_vocab=32)
 
     custom_embed = Embed(cfg)
     official_embed = nn.Embedding(cfg.d_vocab, cfg.d_model)

@@ -1,0 +1,13 @@
+# Tested direct dependencies and development tools.
+# Transitive dependencies are resolved by pip; this is not a full lockfile.
+torch==2.13.0
+einops==0.8.2
+fancy-einsum==0.0.3
+# NumPy 2.5 requires Python 3.12; let pip select a compatible version on 3.11.
+numpy==2.5.2; python_version >= "3.12"
+numpy>=1.24,<2.5; python_version < "3.12"
+build==1.6.0
+mypy==2.3.1
+pyright==1.1.411
+pytest==9.1.1
+ruff==0.16.5

@@ -8,7 +8,7 @@ from gpt2.layer_norm import LayerNorm
 def test_layer_norm_matches_pytorch() -> None:
     torch.manual_seed(42)
 
-    cfg = Config()
+    cfg = Config(d_model=16)
 
     custom_ln = LayerNorm(cfg)
     official_ln = nn.LayerNorm(cfg.d_model, eps=cfg.layer_norm_eps)

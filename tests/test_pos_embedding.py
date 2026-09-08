@@ -8,7 +8,7 @@ from gpt2.pos_embedding import PosEmbed
 def test_pos_embedding_matches_pytorch() -> None:
     torch.manual_seed(42)
 
-    cfg = Config()
+    cfg = Config(d_model=16, n_ctx=16)
 
     custom_pos_embed = PosEmbed(cfg)
     official_pos_embed = nn.Embedding(cfg.n_ctx, cfg.d_model)
@@ -27,7 +27,7 @@ def test_pos_embedding_matches_pytorch() -> None:
 
 
 def test_pos_embedding_shape() -> None:
-    cfg = Config()
+    cfg = Config(d_model=16, n_ctx=16)
 
     pos_embed = PosEmbed(cfg)
 
@@ -38,7 +38,7 @@ def test_pos_embedding_shape() -> None:
 
 
 def test_pos_embedding_uses_correct_positions() -> None:
-    cfg = Config()
+    cfg = Config(d_model=16, n_ctx=16)
 
     pos_embed = PosEmbed(cfg)
 

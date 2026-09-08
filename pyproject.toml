@@ -9,7 +9,7 @@ description = "Implementing a GPT-2-style Transformers from scratch"
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "MIT" }
-dependencies = ["torch>=2.0", "einops>=0.8", "numpy>=2.5"]
+dependencies = ["torch>=2.0", "einops>=0.8", "numpy>=2.5", "fancy-einsum>=0.0.3"]
 
 [project.optional-dependencies]
 dev = ["mypy>=1.10", "pytest>=8.0", "ruff>=0.6"]
@@ -38,3 +38,8 @@ no_implicit_optional = true
 warn_redundant_casts = true
 warn_unused_ignores = true
 warn_return_any = true
+
+[tool.pyright]
+include = ["src"]
+venvPath = "."
+venv = ".venv"

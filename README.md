@@ -98,6 +98,17 @@ Read the components in this order: `embedding.py`, `pos_embedding.py`,
 `layer_norm.py`, `attention.py`, `mlp.py`, `transformer_block.py`,
 `unembedding.py`, and `model.py`.
 
+## Acknowledgments
+
+This educational project was developed based on Neel Nanda's
+two-part Transformer walkthrough:
+
+- [What is a Transformer? (Part 1/2)](https://www.youtube.com/watch?v=bOYE6E8JrtU)
+- [Implementing GPT-2 From Scratch (Part 2/2)](https://www.youtube.com/watch?v=dsjUDacBw8o)
+
+The walkthrough served as the foundation for studying and implementing
+the GPT-2 architecture in this repository.
+
 ## License
 
 [MIT](LICENSE).
